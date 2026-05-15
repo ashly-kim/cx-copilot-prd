@@ -1602,5 +1602,44 @@
 
   sections.forEach(s => observer.observe(s));
 </script>
+
+<!-- ── Bottom Tab Bar ── -->
+<style>
+  .tab-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 52px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid #e5e5e3;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    z-index: 200;
+  }
+  .tab-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    text-decoration: none; color: #6b6b68;
+    transition: background .15s, color .15s;
+    border: 1px solid transparent;
+  }
+  .tab-btn:hover { background: #f3f4f6; color: #1a1a18; }
+  .tab-btn.current {
+    background: #eff6ff; color: #2563eb;
+    border-color: #bfdbfe; font-weight: 700;
+  }
+  .tab-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .main { padding-bottom: 80px; }
+</style>
+<nav class="tab-bar">
+  <a class="tab-btn current" href="index.html">
+    <span class="tab-dot" style="background:#2563eb"></span>
+    CX Copilot PRD
+  </a>
+  <a class="tab-btn" href="slack-analysis.html">
+    <span class="tab-dot" style="background:#8b5cf6"></span>
+    슬랙 Q&A 분석
+  </a>
+</nav>
 </body>
 </html>

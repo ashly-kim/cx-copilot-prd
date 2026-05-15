@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이진선 → 안예원 질문 분석</title>
+  <style>
+    :root {
+      --bg: #f7f7f6;
+      --surface: #ffffff;
+      --border: #e5e5e3;
+      --text: #1a1a18;
+      --text-muted: #6b6b68;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --radius: 10px;
+      --shadow: 0 1px 4px rgba(0,0,0,.08);
+      --c1: #3b82f6; /* 오류 */
+      --c2: #8b5cf6; /* 기타 */
+      --c3: #f59e0b; /* 마이그레이션 */
+      --c4: #10b981; /* 계정생성 */
+      --c5: #ef4444; /* 개발반영 */
+      --c6: #f97316; /* 충전결제 */
+      --c7: #06b6d4; /* 카드배포 */
+      --c8: #ec4899; /* 정보변경 */
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── Layout ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: 220px; height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 28px 0 40px;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .sidebar-logo {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .sidebar-logo .tag {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .sidebar-logo h2 { font-size: 13px; font-weight: 700; margin-top: 4px; line-height: 1.4; }
+    .nav-section { padding: 0 12px; }
+    .nav-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--text-muted); padding: 8px 8px 4px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 8px; border-radius: 5px;
+      font-size: 12px; color: var(--text-muted);
+      text-decoration: none; transition: background .12s, color .12s;
+      cursor: pointer;
+    }
+    .nav-item:hover { background: var(--bg); color: var(--text); }
+    .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+    .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .main { margin-left: 220px; max-width: 900px; padding: 56px 52px 120px; }
+
+    /* ── Header ── */
+    .page-header { margin-bottom: 48px; }
+    .page-header .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+    }
+    .page-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; line-height: 1.25; }
+    .page-header p { color: var(--text-muted); margin-top: 10px; font-size: 14px; }
+
+    /* ── Stat cards ── */
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 22px;
+      box-shadow: var(--shadow);
+    }
+    .stat-card .label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
+    .stat-card .value { font-size: 36px; font-weight: 800; letter-spacing: -.03em; margin-top: 4px; }
+    .stat-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 56px; }
+    .section-title {
+      font-size: 18px; font-weight: 700; margin-bottom: 20px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-num {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 2px 7px; border-radius: 4px;
+    }
+
+    /* ── Bar chart ── */
+    .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+    .bar-row { display: flex; align-items: center; gap: 12px; }
+    .bar-label { width: 120px; font-size: 13px; font-weight: 500; text-align: right; flex-shrink: 0; }
+    .bar-track { flex: 1; background: var(--bg); border-radius: 6px; height: 28px; overflow: hidden; position: relative; }
+    .bar-fill {
+      height: 100%; border-radius: 6px;
+      display: flex; align-items: center; padding-left: 10px;
+      font-size: 12px; font-weight: 700; color: white;
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+      min-width: 36px;
+    }
+    .bar-pct { font-size: 12px; color: var(--text-muted); width: 38px; text-align: right; flex-shrink: 0; }
+
+    /* ── Donut chart ── */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .chart-card h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: .06em; }
+    .donut-wrap { display: flex; align-items: center; gap: 24px; }
+    .donut-svg { flex-shrink: 0; }
+    .legend { display: flex; flex-direction: column; gap: 7px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-name { flex: 1; }
+    .legend-cnt { font-weight: 700; color: var(--text-muted); }
+
+    /* ── Category cards ── */
+    .cat-grid { display: flex; flex-direction: column; gap: 20px; }
+    .cat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .cat-header {
+      padding: 16px 20px; display: flex; align-items: center;
+      justify-content: space-between; border-bottom: 1px solid var(--border);
+    }
+    .cat-header-left { display: flex; align-items: center; gap: 10px; }
+    .cat-badge {
+      width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
+    }
+    .cat-name { font-size: 15px; font-weight: 700; }
+    .cat-count {
+      font-size: 12px; font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; color: white;
+    }
+    .cat-body { padding: 16px 20px; }
+    .cat-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.6; }
+    .msg-list { display: flex; flex-direction: column; gap: 8px; }
+    .msg-item {
+      background: var(--bg); border-radius: 7px;
+      padding: 10px 13px; font-size: 13px; line-height: 1.6;
+      border-left: 3px solid var(--border);
+      position: relative;
+    }
+    .msg-item .msg-meta {
+      font-size: 10px; color: var(--text-muted); margin-bottom: 4px;
+      display: flex; gap: 8px;
+    }
+    .msg-item .ch-badge {
+      font-size: 10px; font-weight: 600; padding: 1px 6px;
+      border-radius: 3px; background: var(--border); color: var(--text-muted);
+    }
+    .msg-text { color: var(--text); }
+
+    /* ── Insight box ── */
+    .insight-box {
+      background: var(--accent-light); border: 1px solid #bfdbfe;
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 48px;
+    }
+    .insight-box h3 { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+    .insight-box ul { padding-left: 18px; }
+    .insight-box li { font-size: 13px; color: #1e40af; margin-bottom: 6px; line-height: 1.6; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="tag">Slack 분석</div>
+    <h2>진선 → 예원<br>질문 패턴</h2>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">개요</div>
+    <a class="nav-item active" onclick="scrollTo('summary')">요약 통계</a>
+    <a class="nav-item" onclick="scrollTo('chart')">유형별 분포</a>
+    <a class="nav-item" onclick="scrollTo('insight')">챗봇 인사이트</a>
+    <div class="nav-label" style="margin-top:12px">유형별 상세</div>
+    <a class="nav-item" onclick="scrollTo('cat-0')"><span class="nav-dot" style="background:var(--c1)"></span>오류/문제 확인</a>
+    <a class="nav-item" onclick="scrollTo('cat-1')"><span class="nav-dot" style="background:var(--c2)"></span>기타 문의</a>
+    <a class="nav-item" onclick="scrollTo('cat-2')"><span class="nav-dot" style="background:var(--c3)"></span>마이그레이션</a>
+    <a class="nav-item" onclick="scrollTo('cat-3')"><span class="nav-dot" style="background:var(--c4)"></span>계정/학원 생성</a>
+    <a class="nav-item" onclick="scrollTo('cat-4')"><span class="nav-dot" style="background:var(--c5)"></span>개발/데이터 반영</a>
+    <a class="nav-item" onclick="scrollTo('cat-5')"><span class="nav-dot" style="background:var(--c6)"></span>충전/결제</a>
+    <a class="nav-item" onclick="scrollTo('cat-6')"><span class="nav-dot" style="background:var(--c7)"></span>카드 배포/등록</a>
+    <a class="nav-item" onclick="scrollTo('cat-7')"><span class="nav-dot" style="background:var(--c8)"></span>정보 변경/수정</a>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main class="main">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="eyebrow">Slack 채널 분석 · 2025.10 — 2026.05</div>
+    <h1>이진선 → 안예원<br>질문 & 요청 패턴 분석</h1>
+    <p>일반 · product · 장학카드 채널 기준 · 두 사람이 함께한 스레드 195개 분석</p>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stat-row" id="summary">
+    <div class="stat-card">
+      <div class="label">진선님 총 발화</div>
+      <div class="value" style="color:var(--accent)">490</div>
+      <div class="sub">195개 스레드 내</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">업무 관련 요청</div>
+      <div class="value" style="color:var(--c1)">320</div>
+      <div class="sub">전체의 65%</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">가장 많은 유형</div>
+      <div class="value" style="color:var(--c1); font-size:22px; margin-top:8px">오류 확인</div>
+      <div class="sub">103건 · 업무 요청의 32%</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="section" id="chart">
+    <div class="section-title"><span class="section-num">01</span>유형별 분포</div>
+
+    <div class="charts-row">
+      <!-- Bar chart card -->
+      <div class="chart-card" style="grid-column: 1 / -1;">
+        <h3>업무 요청 유형별 건수</h3>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="bar-label">오류/문제 확인</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--c1)">103</div></div>
+            <div class="bar-pct">32%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">기타 문의</div>
+            <div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--c2)">73</div></div>
+            <div class="bar-pct">23%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">마이그레이션</div>
+            <div class="bar-track"><div class="bar-fill" style="width:33%;background:var(--c3)">34</div></div>
+            <div class="bar-pct">11%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">계정/학원 생성</div>
+            <div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--c4)">29</div></div>
+            <div class="bar-pct">9%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">개발/데이터 반영</div>
+            <div class="bar-track"><div class="bar-fill" style="width:26%;background:var(--c5)">27</div></div>
+            <div class="bar-pct">8%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">충전/결제</div>
+            <div class="bar-track"><div class="bar-fill" style="width:21%;background:var(--c6)">22</div></div>
+            <div class="bar-pct">7%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">카드 배포/등록</div>
+            <div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--c7)">21</div></div>
+            <div class="bar-pct">7%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">정보 변경/수정</div>
+            <div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--c8)">11</div></div>
+            <div class="bar-pct">3%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donut -->
+    <div class="chart-card" style="margin-top:20px">
+      <h3>업무 요청 구성 비율</h3>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="160" height="160" viewBox="0 0 160 160">
+          <!-- 도넛 차트: 각도 계산 (총 320건 기준) -->
+          <!-- c1: 103/320=32.2% → 115.8° , c2: 73=22.8%→82.1°, c3:34=10.6%→38.3°,
+               c4:29=9.1%→32.6°, c5:27=8.4%→30.4°, c6:22=6.9%→24.8°, c7:21=6.6%→23.6°, c8:11=3.4%→12.4° -->
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c1)" stroke-width="28"
+            stroke-dasharray="115.8 244.2" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c2)" stroke-width="28"
+            stroke-dasharray="82.1 277.9" stroke-dashoffset="-115.8" transform="rotate(-90 80 80)"/>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c3)" stroke-width="28"
+            stroke-dasharray="38.3 321.7" stroke-dashoffset="-197.9" transform="rotate(-90 80 80)"/>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c4)" stroke-width="28"
+            stroke-dasharray="32.6 327.4" stroke-dashoffset="-236.2" transform="rotate(-90 80 80)"/>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c5)" stroke-width="28"
+            stroke-dasharray="30.4 329.6" stroke-dashoffset="-268.8" transform="rotate(-90 80 80)"/>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c6)" stroke-width="28"
+            stroke-dasharray="24.8 335.2" stroke-dashoffset="-299.2" transform="rotate(-90 80 80)"/>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c7)" stroke-width="28"
+            stroke-dasharray="23.6 336.4" stroke-dashoffset="-324.0" transform="rotate(-90 80 80)"/>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--c8)" stroke-width="28"
+            stroke-dasharray="12.4 347.6" stroke-dashoffset="-347.6" transform="rotate(-90 80 80)"/>
+          <text x="80" y="75" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">320</text>
+          <text x="80" y="92" text-anchor="middle" font-size="11" fill="var(--text-muted)">업무 요청</text>
+        </svg>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div><div class="legend-name">오류/문제 확인</div><div class="legend-cnt">103</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div><div class="legend-name">기타 문의</div><div class="legend-cnt">73</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c3)"></div><div class="legend-name">마이그레이션/이전</div><div class="legend-cnt">34</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c4)"></div><div class="legend-name">계정/학원 생성</div><div class="legend-cnt">29</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c5)"></div><div class="legend-name">개발/데이터 반영</div><div class="legend-cnt">27</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c6)"></div><div class="legend-name">충전/결제</div><div class="legend-cnt">22</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c7)"></div><div class="legend-name">카드 배포/등록</div><div class="legend-cnt">21</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c8)"></div><div class="legend-name">정보 변경/수정</div><div class="legend-cnt">11</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insight -->
+  <div class="insight-box" id="insight">
+    <h3>챗봇 학습 인사이트</h3>
+    <ul>
+      <li><strong>오류/문제 확인 (32%)</strong> — 가장 많은 유형. 고객 CS 오류를 진선님이 예원님에게 전달하는 패턴. 챗봇이 1차로 증상을 수집해 개발팀에 자동 전달하는 흐름 설계 가능.</li>
+      <li><strong>계정/학원 생성 + 정보 변경 (12%)</strong> — 반복적인 요청 형식(학원명/사업자번호/원장명)이 정형화돼 있어 챗봇이 수집 후 자동 요청하는 형태로 자동화 적합.</li>
+      <li><strong>마이그레이션/이전 (11%)</strong> — 클레모→티처스 전환 이슈. 대부분 패턴이 일정해 자동 안내로 해결 가능.</li>
+      <li><strong>충전/결제 + 카드 배포/등록 (14%)</strong> — 고객이 직접 문의하는 빈도 높은 항목. 챗봇이 고객에게 직접 안내해 진선님 거치지 않도록 단축 가능.</li>
+    </ul>
+  </div>
+
+  <!-- Category detail cards -->
+  <div class="section">
+    <div class="section-title"><span class="section-num">02</span>유형별 실제 질문 사례</div>
+    <div class="cat-grid">
+
+      <!-- 오류/문제 확인 -->
+      <div class="cat-card" id="cat-0">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c1)"></div>
+            <div class="cat-name">오류/문제 확인</div>
+          </div>
+          <div class="cat-count" style="background:var(--c1)">103건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">고객이 겪는 오류를 진선님이 예원님에게 전달하며 원인 및 해결을 요청하는 패턴. 가장 빈도 높음.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c1)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-12</span></div>
+              <div class="msg-text">최나리/순수학 → 카드 배포 진행하시는데 계속 등록실패(카드 저장실패) 되시는데 이유가 혹시 뭘까요?</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c1)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-10</span></div>
+              <div class="msg-text">이분 티처스 로그인했는데 가입되지 않은 계정이라고 나온다고 하시거든요. 확인 한번 부탁드릴게요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c1)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-03-04</span></div>
+              <div class="msg-text">오늘 충전한 내역만 리스트업 하고 싶으신데 카드충전내역에서 날짜 선택해도 티처스 배포 카드만 뜬다고 합니다. 확인 부탁드릴게요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c1)">
+              <div class="msg-meta"><span class="ch-badge">#장학카드</span><span>2026-02-10</span></div>
+              <div class="msg-text">본인인증 하고 들어갔는데 그런 에러메시지 받으신 건 아니시겠죠? 혹시 학생 서비스로 로그인하신 걸까요?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 마이그레이션 -->
+      <div class="cat-card" id="cat-2">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c3)"></div>
+            <div class="cat-name">마이그레이션/이전</div>
+          </div>
+          <div class="cat-count" style="background:var(--c3)">34건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">클레모→티처스 전환 과정에서 카드 데이터, 학생 정보, 잔액 이전 등을 요청하는 패턴.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c3)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-10</span></div>
+              <div class="msg-text">마이그레이션 해드린 번호로는 본인인증이 안 되시어 로그인하실 수가 없다고 하시더라구요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c3)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-27</span></div>
+              <div class="msg-text">클레모에서 등록해 놓았었을 경우, 마이그레이션이 될 때 특이사항에 남아야하는데 모두 안보인다고 하시더라구요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c3)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-03-12</span></div>
+              <div class="msg-text">클레모 관리코드를 마이그레이션 해온 이후의 작업들을 불러와서 티처스에 반영할 수 있을까요?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 계정/학원 생성 -->
+      <div class="cat-card" id="cat-3">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c4)"></div>
+            <div class="cat-name">계정/학원 생성</div>
+          </div>
+          <div class="cat-count" style="background:var(--c4)">29건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">신규 원장님 계정 생성을 요청하는 패턴. 학원명/사업자번호/원장명 형식이 정형화돼 있음.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c4)">
+              <div class="msg-meta"><span class="ch-badge">#장학카드</span><span>2026-02-02</span></div>
+              <div class="msg-text">강혜승(키즈엔리딩) / 한미영(수학의달인화곡푸르지오점학원) 생성 부탁드릴게요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c4)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-06</span></div>
+              <div class="msg-text">비상잉글리시아이황금초점/이은희/5419700350, 이지수학학원/강혜령/1509000214 이 두 분 계정 생성 부탁드릴게요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c4)">
+              <div class="msg-meta"><span class="ch-badge">#장학카드</span><span>2026-02-09</span></div>
+              <div class="msg-text">미래앤영어수학바론학원/4379601878/장준희 이분 티처스 바로 등록 도와드려야 해서 부탁드릴게요.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 개발/데이터 반영 -->
+      <div class="cat-card" id="cat-4">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c5)"></div>
+            <div class="cat-name">개발/데이터 반영</div>
+          </div>
+          <div class="cat-count" style="background:var(--c5)">27건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">SFTP, ICB 데이터 반영, 특정 기능 업데이트 확인 등 개발팀 확인이 필요한 요청.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c5)">
+              <div class="msg-meta"><span class="ch-badge">#장학카드</span><span>2026-02-13</span></div>
+              <div class="msg-text">수정 선임님이 certInfo_20260210 에 SFTP 오늘 올려주셨다고 하셔서요. 내일 김윤경 원장님 반영 여부 확인 부탁드릴게요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c5)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-03-12</span></div>
+              <div class="msg-text">클레모 관리코드를 마이그레이션 해온 이후의 작업들을 불러와서 티처스에 반영할 수 있을까요? (랭콘아발론교육/강무정)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 충전/결제 -->
+      <div class="cat-card" id="cat-5">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c6)"></div>
+            <div class="cat-name">충전/결제</div>
+          </div>
+          <div class="cat-count" style="background:var(--c6)">22건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">충전 내역 조회, 결제 오류, 충전 방식 관련 고객 문의를 예원님에게 전달하는 패턴.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c6)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-19</span></div>
+              <div class="msg-text">오늘 충전한 내역만 리스트업 하고 싶으신데, 카드충전내역에서 19일 선택하면 티처스 배포 카드만 뜬다고 합니다. 확인 부탁드릴게요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c6)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-19</span></div>
+              <div class="msg-text">학생이 앱 설치해서 카드목록에 이름이 보여지는데, 카드충전내역에는 이름이 뜨지 않는다고 해요.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 카드 배포/등록 -->
+      <div class="cat-card" id="cat-6">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c7)"></div>
+            <div class="cat-name">카드 배포/등록</div>
+          </div>
+          <div class="cat-count" style="background:var(--c7)">21건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">카드 등록 실패, 배포 오류, 자녀 카드 복수 등록 등 배포 관련 문의.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c7)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-12</span></div>
+              <div class="msg-text">카드 배포 진행하시는데 계속 등록실패(카드 저장실패) 되시는데 이유가 혹시 뭘까요?</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c7)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-12</span></div>
+              <div class="msg-text">두 자녀의 카드를 어머님 핸드폰으로 앱 다운받아 등록하려고 하는데 둘째 카드는 어떻게 해야 하나요?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 정보 변경/수정 -->
+      <div class="cat-card" id="cat-7">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c8)"></div>
+            <div class="cat-name">정보 변경/수정</div>
+          </div>
+          <div class="cat-count" style="background:var(--c8)">11건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">원장님 전화번호, 성함, 대표자 이름 변경 등 계정 정보 수정 요청.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c8)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-02-10</span></div>
+              <div class="msg-text">APL수학교습소(죽곡점) 정혜원 원장님 010-8695-6251 → 01086408555로 변경 부탁드릴게요.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c8)">
+              <div class="msg-meta"><span class="ch-badge">#product</span><span>2026-04-13</span></div>
+              <div class="msg-text">실무자가 계정 만들어서 주문했을 경우 카드 관리 화면에 실무자 이름이 원장님으로 뜨는데 대표자 이름 변경이 가능할까요?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 기타 -->
+      <div class="cat-card" id="cat-1">
+        <div class="cat-header">
+          <div class="cat-header-left">
+            <div class="cat-badge" style="background:var(--c2)"></div>
+            <div class="cat-name">기타 문의</div>
+          </div>
+          <div class="cat-count" style="background:var(--c2)">73건</div>
+        </div>
+        <div class="cat-body">
+          <div class="cat-desc">분류 기준에 해당하지 않는 일반 업무 소통. 상황 공유, 진행 현황 확인, 논의 요청 등 포함.</div>
+          <div class="msg-list">
+            <div class="msg-item" style="border-color:var(--c2)">
+              <div class="msg-meta"><span class="ch-badge">#product</span></div>
+              <div class="msg-text">오늘도 아마 CS가 많을 것 같은... 양도양수증 전달, b계정 배포카드 원장님들 안내 및 디자인 확인, 해결된 에러 결과 확인 후 회신 예정.</div>
+            </div>
+            <div class="msg-item" style="border-color:var(--c2)">
+              <div class="msg-meta"><span class="ch-badge">#product</span></div>
+              <div class="msg-text">챗봇 관련해서는 저에게 어떤 거라도 말씀해주세요. 진작에 더 빨리 만들어드렸어야 했는데 진선님 구출 작전.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  // IntersectionObserver for nav highlight
+  const sections = ['summary','chart','insight','cat-0','cat-1','cat-2','cat-3','cat-4','cat-5','cat-6','cat-7'];
+  const navMap = {
+    'summary': 0, 'chart': 1, 'insight': 2,
+    'cat-0': 3, 'cat-1': 4, 'cat-2': 5, 'cat-3': 6,
+    'cat-4': 7, 'cat-5': 8, 'cat-6': 9, 'cat-7': 10
+  };
+  const navItems = document.querySelectorAll('.nav-item');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const idx = navMap[e.target.id];
+        if (idx !== undefined && navItems[idx]) navItems[idx].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) obs.observe(el);
+  });
+</script>
+
+<!-- ── Bottom Tab Bar ── -->
+<style>
+  .tab-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 52px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid #e5e5e3;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    z-index: 200;
+  }
+  .tab-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    text-decoration: none; color: #6b6b68;
+    transition: background .15s, color .15s;
+    border: 1px solid transparent;
+  }
+  .tab-btn:hover { background: #f3f4f6; color: #1a1a18; }
+  .tab-btn.current {
+    background: #f5f3ff; color: #7c3aed;
+    border-color: #ddd6fe; font-weight: 700;
+  }
+  .tab-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .main { padding-bottom: 80px; }
+</style>
+<nav class="tab-bar">
+  <a class="tab-btn" href="index.html">
+    <span class="tab-dot" style="background:#2563eb"></span>
+    CX Copilot PRD
+  </a>
+  <a class="tab-btn current" href="slack-analysis.html">
+    <span class="tab-dot" style="background:#8b5cf6"></span>
+    슬랙 Q&A 분석
+  </a>
+</nav>
+</body>
+</html>
