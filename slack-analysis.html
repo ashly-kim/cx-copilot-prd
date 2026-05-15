@@ -12,9 +12,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .sidebar-logo .tag{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .sidebar-logo h2{font-size:15px;font-weight:700;margin-top:5px}
 .nav-section{padding:0 14px}
-.nav-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding:14px 8px 6px}
-.nav-label.muted{color:var(--muted)}
-.nav-item{display:block;padding:7px 10px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:.12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.nav-group{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:none;border:none;cursor:pointer;padding:13px 10px 7px;text-align:left}
+.nav-group:hover{color:#5638d6}
+.nav-group .chev{font-size:10px;color:var(--accent);transition:transform .2s;flex-shrink:0}
+.nav-group.collapsed .chev{transform:rotate(-90deg)}
+.nav-children{display:flex;flex-direction:column;margin-bottom:6px}
+.nav-group.collapsed + .nav-children{display:none}
+.nav-item{display:block;padding:7px 10px 7px 16px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:.12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 .nav-item:hover{background:var(--soft);color:var(--text)}
 .nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
 .nav-toggle{position:fixed;top:18px;left:18px;z-index:300;width:40px;height:40px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh);transition:left .25s ease}
@@ -93,39 +97,45 @@ code{background:var(--soft);border:1px solid var(--border);border-radius:4px;pad
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-logo"><div class="tag">CX Copilot &middot; 2026</div><h2>CX Copilot</h2></div>
   <div class="nav-section">
-    <div class="nav-label">슬랙 데이터 분석</div>
-    <a class="nav-item" href="#s-dist">01. 전체 유형 분포</a>
-    <a class="nav-item" href="#s-finding">02. 핵심 발견</a>
-    <a class="nav-item" href="#s-pattern">03. 반복 패턴</a>
-    <a class="nav-item" href="#s-improve">04. 개선 방향</a>
+    <button class="nav-group" onclick="toggleGroup(this)">슬랙 데이터 분석 <span class="chev">&#9660;</span></button>
+    <div class="nav-children">
+      <a class="nav-item" href="#s-dist">01. 전체 유형 분포</a>
+      <a class="nav-item" href="#s-finding">02. 핵심 발견</a>
+      <a class="nav-item" href="#s-pattern">03. 반복 패턴</a>
+      <a class="nav-item" href="#s-improve">04. 개선 방향</a>
+    </div>
 
-    <div class="nav-label">DB 관련 작업 내역 분석</div>
-    <a class="nav-item" href="#overview">00. 개요</a>
-    <a class="nav-item" href="#dist">01. 유형별 분포</a>
-    <a class="nav-item" href="#finding">02. 핵심 발견</a>
-    <a class="nav-item" href="#priority">03. 설계 우선순위</a>
-    <a class="nav-item" href="#conclusion">04. 챗봇 설계 결론</a>
+    <button class="nav-group" onclick="toggleGroup(this)">DB 관련 작업 내역 분석 <span class="chev">&#9660;</span></button>
+    <div class="nav-children">
+      <a class="nav-item" href="#overview">00. 개요</a>
+      <a class="nav-item" href="#dist">01. 유형별 분포</a>
+      <a class="nav-item" href="#finding">02. 핵심 발견</a>
+      <a class="nav-item" href="#priority">03. 설계 우선순위</a>
+      <a class="nav-item" href="#conclusion">04. 챗봇 설계 결론</a>
+    </div>
 
-    <div class="nav-label muted" style="margin-top:18px">CX 챗봇 PRD</div>
-    <a class="nav-item" href="index.html#tldr">01. 핵심 요약</a>
-    <a class="nav-item" href="index.html#background">02. 배경</a>
-    <a class="nav-item" href="index.html#benchmark">03. 업계 비교</a>
-    <a class="nav-item" href="index.html#solution">04. 솔루션</a>
-    <a class="nav-item" href="index.html#goals">05. 목표 &amp; 하지 않을 것들</a>
-    <a class="nav-item" href="index.html#personas">06. 페르소나 &amp; 유저 스토리</a>
-    <a class="nav-item" href="index.html#modes">07. 운영 모드</a>
-    <a class="nav-item" href="index.html#types">08. 질의 유형</a>
-    <a class="nav-item" href="index.html#slack">09. 슬랙 봇 동작</a>
-    <a class="nav-item" href="index.html#knowledge">10. 정책 질문 답변</a>
-    <a class="nav-item" href="index.html#actions">11. 액션 실행</a>
-    <a class="nav-item" href="index.html#ab">12. A/B 테스트</a>
-    <a class="nav-item" href="index.html#security">13. 보안</a>
-    <a class="nav-item" href="index.html#edge">14. 엣지 케이스</a>
-    <a class="nav-item" href="index.html#rollout">15. 출시 전략</a>
-    <a class="nav-item" href="index.html#risks">16. 리스크</a>
-    <a class="nav-item" href="index.html#openq">17. 미결 사항</a>
-    <a class="nav-item" href="index.html#metrics">18. 측정 &amp; 운영</a>
-    <a class="nav-item" href="index.html#appendix">부록 A&ndash;D</a>
+    <button class="nav-group collapsed" onclick="toggleGroup(this)">CX 챗봇 PRD <span class="chev">&#9660;</span></button>
+    <div class="nav-children">
+      <a class="nav-item" href="index.html#tldr">01. 핵심 요약</a>
+      <a class="nav-item" href="index.html#background">02. 배경</a>
+      <a class="nav-item" href="index.html#benchmark">03. 업계 비교</a>
+      <a class="nav-item" href="index.html#solution">04. 솔루션</a>
+      <a class="nav-item" href="index.html#goals">05. 목표 &amp; 하지 않을 것들</a>
+      <a class="nav-item" href="index.html#personas">06. 페르소나 &amp; 유저 스토리</a>
+      <a class="nav-item" href="index.html#modes">07. 운영 모드</a>
+      <a class="nav-item" href="index.html#types">08. 질의 유형</a>
+      <a class="nav-item" href="index.html#slack">09. 슬랙 봇 동작</a>
+      <a class="nav-item" href="index.html#knowledge">10. 정책 질문 답변</a>
+      <a class="nav-item" href="index.html#actions">11. 액션 실행</a>
+      <a class="nav-item" href="index.html#ab">12. A/B 테스트</a>
+      <a class="nav-item" href="index.html#security">13. 보안</a>
+      <a class="nav-item" href="index.html#edge">14. 엣지 케이스</a>
+      <a class="nav-item" href="index.html#rollout">15. 출시 전략</a>
+      <a class="nav-item" href="index.html#risks">16. 리스크</a>
+      <a class="nav-item" href="index.html#openq">17. 미결 사항</a>
+      <a class="nav-item" href="index.html#metrics">18. 측정 &amp; 운영</a>
+      <a class="nav-item" href="index.html#appendix">부록 A&ndash;D</a>
+    </div>
   </div>
 </nav>
 
@@ -388,6 +398,7 @@ code{background:var(--soft);border:1px solid var(--border);border-radius:4px;pad
 
 <script>
 function toggleNav(){document.body.classList.toggle('nav-closed');try{localStorage.setItem('navClosed',document.body.classList.contains('nav-closed')?'1':'0');}catch(e){}}
+function toggleGroup(btn){btn.classList.toggle('collapsed');}
 try{if(localStorage.getItem('navClosed')==='1')document.body.classList.add('nav-closed');}catch(e){}
 document.querySelectorAll('.pat-head, .prio-head').forEach(h=>h.addEventListener('click',()=>{
   const b=h.nextElementSibling;
@@ -397,7 +408,7 @@ document.querySelectorAll('.pat-head, .prio-head').forEach(h=>h.addEventListener
   const secs=['s-dist','s-finding','s-pattern','s-improve','overview','dist','finding','priority','conclusion'];
   const map={};
   document.querySelectorAll('.sidebar .nav-item').forEach(a=>{const h=a.getAttribute('href')||'';if(h.startsWith('#'))map[h.slice(1)]=a;});
-  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sidebar .nav-item.active').forEach(x=>x.classList.remove('active'));if(map[e.target.id])map[e.target.id].classList.add('active');}});},{rootMargin:'-12% 0px -80% 0px'});
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sidebar .nav-item.active').forEach(x=>x.classList.remove('active'));const it=map[e.target.id];if(it){it.classList.add('active');const grp=it.closest('.nav-children')&&it.closest('.nav-children').previousElementSibling;if(grp&&grp.classList.contains('nav-group'))grp.classList.remove('collapsed');}}});},{rootMargin:'-12% 0px -80% 0px'});
   secs.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
 })();
 </script>
