@@ -100,9 +100,8 @@ code{background:var(--soft);border:1px solid var(--border);border-radius:4px;pad
     <button class="nav-group" onclick="toggleGroup(this)">슬랙 데이터 분석 <span class="chev">&#9660;</span></button>
     <div class="nav-children">
       <a class="nav-item" href="#s-dist">01. 전체 유형 분포</a>
-      <a class="nav-item" href="#s-finding">02. 핵심 발견</a>
-      <a class="nav-item" href="#s-pattern">03. 반복 패턴</a>
-      <a class="nav-item" href="#s-improve">04. 개선 방향</a>
+      <a class="nav-item" href="#s-pattern">02. 반복 패턴</a>
+      <a class="nav-item" href="#s-improve">03. 개선 방향</a>
     </div>
 
     <button class="nav-group" onclick="toggleGroup(this)">DB 관련 작업 내역 분석 <span class="chev">&#9660;</span></button>
@@ -171,23 +170,8 @@ code{background:var(--soft);border:1px solid var(--border);border-radius:4px;pad
     </div>
   </div>
 
-  <div class="card" id="s-finding">
-    <div class="sec-num">02</div>
-    <h3>가장 중요한 발견 — 진선님은 "사람 라우터"다</h3>
-    <p>DB 분석은 <i>예원님이 손댄 작업</i>만 봤지만, 전체를 보면 진선님 역할의 본질이 드러납니다.</p>
-    <div class="callout">
-      <div class="flow">
-        <div><span class="who">원장</span> 고객이 막힘 (에러·문의·요청)</div>
-        <div><span class="who">진선</span> 상황을 정리·통역 → 예원님께 질문/요청 생성</div>
-        <div><span class="who">예원</span> 확인 / 진단 / 처리</div>
-        <div><span class="who">진선</span> 원장에게 회신</div>
-      </div>
-    </div>
-    <p>거의 모든 스레드가 이 구조입니다. 진선님은 CS를 받는 사람이 아니라 <span class="hl">고객-개발 사이의 인간 중계기</span>입니다. 그렇다면 챗봇이 노려야 할 건 단순 "DB 자동화"가 아니라 <b>이 중계·통역·1차 진단 레이어 자체를 흡수</b>하는 것입니다.</p>
-  </div>
-
   <div class="card" id="s-pattern">
-    <div class="sec-num">03</div>
+    <div class="sec-num">02</div>
     <h3>반복 패턴 — 무엇이 되풀이되는가</h3>
     <p class="muted" style="font-size:13px;margin-bottom:16px">각 패턴을 클릭하면 접고 펼 수 있습니다.</p>
 
@@ -236,19 +220,10 @@ code{background:var(--soft);border:1px solid var(--border);border-radius:4px;pad
       </div>
     </div>
 
-    <div class="pat">
-      <div class="pat-head"><div class="pat-n">5</div><div class="pat-title">시간외 노동이 구조화돼 있다</div><div class="pat-cnt">반복</div></div>
-      <div class="pat-body">
-        <ul>
-          <li>"퇴근하셨는데 / 연차신데 / 새벽에 죄송해요"가 반복적으로 등장</li>
-        </ul>
-        <div class="root">개선: 비동기 잡 큐 도입 = 워라밸 개선이 곧 운영 KPI</div>
-      </div>
-    </div>
   </div>
 
   <div class="card" id="s-improve">
-    <div class="sec-num">04</div>
+    <div class="sec-num">03</div>
     <h3>우리가 봐야 할 것 / 개선 방향</h3>
     <table class="tbl">
       <thead><tr><th>봐야 할 것</th><th>개선 방향</th></tr></thead>
@@ -405,7 +380,7 @@ document.querySelectorAll('.pat-head, .prio-head').forEach(h=>h.addEventListener
   b.style.display=(getComputedStyle(b).display==='none'?'block':'none');
 }));
 (function(){
-  const secs=['s-dist','s-finding','s-pattern','s-improve','overview','dist','finding','priority','conclusion'];
+  const secs=['s-dist','s-pattern','s-improve','overview','dist','finding','priority','conclusion'];
   const map={};
   document.querySelectorAll('.sidebar .nav-item').forEach(a=>{const h=a.getAttribute('href')||'';if(h.startsWith('#'))map[h.slice(1)]=a;});
   const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sidebar .nav-item.active').forEach(x=>x.classList.remove('active'));const it=map[e.target.id];if(it){it.classList.add('active');const grp=it.closest('.nav-children')&&it.closest('.nav-children').previousElementSibling;if(grp&&grp.classList.contains('nav-group'))grp.classList.remove('collapsed');}}});},{rootMargin:'-12% 0px -80% 0px'});
